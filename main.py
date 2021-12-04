@@ -1,4 +1,4 @@
-import pygame
+import pygame 
 import sys
 from pygame.math import Vector2
 import random
@@ -109,6 +109,28 @@ class Snake:
             self.tail = self.tail_up
     
     def move_snake(self):
+        x_pos = self.body[0].x
+        y_pos = self.body[0].y
+        x_dir = self.direction.x
+        y_dir = self.direction.y
+
+        if x_pos + x_dir >= cell_number:
+            _body = self.body[:-1]
+            _body.insert(0, Vector2(-1, y_pos))
+            self.body = _body[:]
+        elif x_pos + x_dir < 0:
+            _body = self.body[:-1]
+            _body.insert(0, Vector2(cell_number, y_pos))
+            self.body = _body[:]
+        elif y_pos + y_dir >= cell_number:
+            _body = self.body[:-1]
+            _body.insert(0, Vector2(x_pos, -1))
+            self.body = _body[:]
+        elif y_pos + y_dir < 0:
+            _body = self.body[:-1]
+            _body.insert(0, Vector2(x_pos, cell_number))
+            self.body = _body[:]
+
         if self.new_block == True:
             _body = self.body[:]
             _body.insert(0, _body[0] + self.direction)
@@ -119,6 +141,7 @@ class Snake:
             _body.insert(0, _body[0] + self.direction)
             self.body = _body[:]
     
+
     def add_block(self):
         self.new_block = True
     
@@ -132,12 +155,14 @@ class Snake:
 class Fruit:
     def __init__(self):
         self.randomize()
-    
+        self.apple = pygame.image.load('assets/apple.png').convert_alpha()
+        self.apple = pygame.transform.scale(self.apple, (cell_size, cell_size))
+
     def draw_fruit(self):
         x_pos = int(self.pos.x * cell_size)
         y_pos = int(self.pos.y * cell_size)
         fruit_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)
-        screen.blit(apple, fruit_rect)
+        screen.blit(self.apple, fruit_rect)
     
     def randomize(self):
         self.x = random.randint(0, cell_number - 1)
@@ -172,9 +197,6 @@ class MAIN:
                 self.fruit.randomize()
     
     def check_fail(self):
-        if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
-            self.game_over()
-        
         for block in self.snake.body[1:]:
             if block == self.snake.body[0]:
                 self.game_over()
@@ -183,16 +205,15 @@ class MAIN:
         self.snake.reset()
     
     def draw_grass(self):
-        grass_color = (27, 204, 27)
+        grass_color = (0, 0, 0)
         for row in range(cell_number):
             for column in range(cell_number):
-                if column % 2 == row % 2:
-                    grass_rect = pygame.Rect(column * cell_size, row * cell_size, cell_size, cell_size)
-                    pygame.draw.rect(screen, grass_color, grass_rect)
+                grass_rect = pygame.Rect(column * cell_size, row * cell_size, cell_size, cell_size)
+                pygame.draw.rect(screen, grass_color, grass_rect)
     
     def draw_score(self):
         score_text = str(len(self.snake.body) - 3)
-        score_surface = game_font.render(score_text, True, (1, 4, 18))
+        score_surface = game_font.render(score_text, True, (255, 255, 255))
         score_x = int(cell_size * cell_number - 60)
         score_y = int(cell_size * cell_number - 40)
         score_rect = score_surface.get_rect(center = (score_x, score_y))
@@ -201,23 +222,23 @@ class MAIN:
 
 
 pygame.init()
-
-cell_size = 10
-cell_number = 100
-
+SCREEN_UPDATE = pygame.USEREVENT
+#####################################################
+###################### SETTINGS #####################
+cell_size = 150  #size in pixels
+cell_number = 8 #number of cells in grid
+pygame.time.set_timer(SCREEN_UPDATE, 150) #game speed
+###################### SETTINGS #####################
+#####################################################
 screen = pygame.display.set_mode((cell_size * cell_number, cell_size * cell_number))
 clock = pygame.time.Clock()
-
-apple = pygame.image.load('assets/apple.png').convert_alpha()
-apple = pygame.transform.scale(apple, (cell_size, cell_size))
 
 game_font = pygame.font.Font('assets/font.ttf', int(cell_size / 2))
 
 fruit = Fruit()
 snake = Snake()
 
-SCREEN_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SCREEN_UPDATE, 50)
+
 
 main_game = MAIN()
 
@@ -241,7 +262,6 @@ while True:
             if event.key == pygame.K_LEFT and main_game.snake.direction.x != 1:
                 main_game.snake.direction = Vector2(-1, 0)
     
-    screen.fill((61, 245, 61))
     main_game.draw_elements()
     pygame.display.update()
     clock.tick(150)
