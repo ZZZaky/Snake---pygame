@@ -3,6 +3,17 @@ import sys
 from pygame.math import Vector2
 import random
 
+pygame.init()
+SCREEN_UPDATE = pygame.USEREVENT
+#####################################################
+###################### SETTINGS #####################
+cell_size = 150  #size in pixels
+cell_number = 8 #number of cells in grid
+pygame.time.set_timer(SCREEN_UPDATE, 150) #game speed
+###################### SETTINGS #####################
+#####################################################
+
+
 class Snake:
     def __init__(self):
         self.body = [Vector2(3, 2), Vector2(2, 2), Vector2(1, 2)]
@@ -221,15 +232,7 @@ class MAIN:
         screen.blit(score_surface, score_rect)
 
 
-pygame.init()
-SCREEN_UPDATE = pygame.USEREVENT
-#####################################################
-###################### SETTINGS #####################
-cell_size = 150  #size in pixels
-cell_number = 8 #number of cells in grid
-pygame.time.set_timer(SCREEN_UPDATE, 150) #game speed
-###################### SETTINGS #####################
-#####################################################
+
 screen = pygame.display.set_mode((cell_size * cell_number, cell_size * cell_number))
 clock = pygame.time.Clock()
 
