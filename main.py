@@ -202,8 +202,8 @@ class MAIN:
 
 pygame.init()
 
-cell_size = 100
-cell_number = 10
+cell_size = 10
+cell_number = 100
 
 screen = pygame.display.set_mode((cell_size * cell_number, cell_size * cell_number))
 clock = pygame.time.Clock()
@@ -217,7 +217,7 @@ fruit = Fruit()
 snake = Snake()
 
 SCREEN_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SCREEN_UPDATE, 150)
+pygame.time.set_timer(SCREEN_UPDATE, 50)
 
 main_game = MAIN()
 
